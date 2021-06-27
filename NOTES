@@ -1,0 +1,58 @@
+- install ispring software on wordparts.nathandias.com
+see what I can do with an iframe
+
+- investigate free web hosting through https://www.000webhost.com/
+Report: free PHP hosting with some execution limits, no SSH access, no emails, no subdomains- try installing web app on heroku
+
+- try installing the web app on heroku
+
+
+What we need from the webhost:
+
+SSL - for sending secure passwords
+PHP execution
+ability to host a subdomain:
+- main site www.wordparts.net and wordparts.net will be served by AllProWebTools
+- the web application (student records) students.wordparts.net/ispring/ will be served by (Dreamhost / 000webhost.com / heroku)
+- links on the main site will point to the app at students.wordparts.net
+
+
+Nice to have:
+SSH/SFTP/Shell access -- to make it easier to install and edit files securely
+
+
+ADVICE:
+I would recommend purchasing a basic shared web hosting account from a provider like Dreamhost.com, GoDaddy.com, Hostinger.com, Hostgator.com.
+Purchase an account that allows for at least 1 website/domain and includes a free SSL certificate for encryption and security. The host has
+to support PHP code execution...the above should work. An account that supports SSH/SFTP is also recommended for easier secure developer access to the site.
+
+Note: the providers have introductory offers at $1 - $3/mo, however, these bump up to about $7-13/mo after the initial period, so be ready for
+costs as much as $150/year after the initial period.
+
+Optional:
+- consider an unlimited shared hosting plan if you expect to host more websites in the future
+- consider whether you will want to host Wordpress sites on the chosen web host, now or in the future and purchase accordingly
+- "managed WordPress hosting" may not be sufficient...these accounts are designed specifically for WordPress hosting, and may not support PHP code execution (which we need)
+- however, some shared hosting plans that will work, do offer 1-click WordPress installs and higher performance servers that *also* are optimized for WordPress..these are okay
+
+
+000webhost.com
+- 000webhost.com (NOT RECOMMENDED) FREE, but no SSL, no domains or subdomains, no SSH/SFTP access (only FTP) so may be extra work to install the codebase
+- heroku (NOT RECOMMENDED): offers a free tier, but more technical knowledge to get a web app up and running vs. one of the simple shared hosting providers
+
+
+Dreamhost:
+- pros: I'm very familiar with it and can get it up and running more quickly / cons: might be a little more expensive
+$2.59/mo x 3 years = $94. Renews at $6/mo. Includes 1 website with SSL certificate and SSH.
+$3.95/mo x 3 years = $142. Renews at $11/mo. Includes unlimited websites with SSL certificate and SSH.
+
+
+Hostinger:
+Less familiar, but should work.
+- Premium Shared Hosting - $2.59/mo x 48 mo = $125. renews at $7/mo after that. Includes unlimited websites, FREE SSL certificate (although landing page says otherwise), SSH access
+
+
+
+ispringsolutions.com/docs/
+
+

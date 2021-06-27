@@ -1,0 +1,40 @@
+version: '3'
+services:
+    web:
+#        image: nginx:latest
+        build:
+            context: .
+            dockerfile: WEB.Dockerfile
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+            - ./ispring:/app/ispring
+    php:
+#        image: php:fpm
+        build:
+            context: .
+            dockerfile: PHP.Dockerfile
+        volumes:
+            - ./ispring:/app/ispring
+
+    composer:
+        image: composer:latest
+        command: ["composer", "install"]
+        volumes:
+            - ./ispring:/app/ispring
+
+    mysql:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: 'secret'
+            MYSQL_USER: 'app_user'
+            MYSQL_PASSWORD: 'secret'
+            MYSQL_DATABASE: 'app_database'
+        volumes:
+            - mysqldata:/var/lib/mysql
+        ports:
+            - 3306:3306
+volumes:
+    mysqldata: {}

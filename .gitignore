@@ -1,0 +1,5 @@
+vendor/
+archives/
+.env
+php.ini*
+
