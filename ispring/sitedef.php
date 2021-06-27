@@ -16,7 +16,6 @@ $dotenv->safeLoad();
 
 $base_url = $_ENV['BASE_URL'];
 
-
 # the web app credentials
 $app_valid_email = $_ENV['VALID_EMAIL'];
 $app_valid_pass = $_ENV['VALID_PASS'];
@@ -27,3 +26,8 @@ $ispring_auth_email = $_ENV['ISPRING_AUTH_EMAIL'];
 $ispring_auth_pass = $_ENV['ISPRING_AUTH_PASS'];
 
 $ispring_department_id = $_ENV['ISPRING_DEPARTMENT_ID'];
+
+$pagination_limit = 10; # default
+if (isset($_GET['pagination_limit']) && is_numeric($_GET['pagination_limit']) && $_GET['pagination_limit'] > 0) {
+    $pagination_limit = $_GET['pagination_limit'];
+}

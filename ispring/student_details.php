@@ -148,15 +148,17 @@ if(!isset($_SESSION["email"])){
                     </div>
                 </div>
             </section>
+            
         </main>
         <script>
             $(document).ready(function() {
-                $('#tableData').paging({ limit: 5 });
+                $('#tableData').paging({ limit: <?= $pagination_limit ?> });
                 $('#tableData').paging({
                     activePage: 0,
                 });
             }); 
         </script>
+
     </body>
 </html>
 <?php  
