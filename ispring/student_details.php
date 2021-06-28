@@ -6,6 +6,7 @@ if(!isset($_SESSION["email"])){
   require_once('sitedef.php');
   include_once('header/header.php');
   include_once('function/student_group.php');
+  include_once('function/student_result.php');
 ?>
 <!DOCTYPE html>
 <html>
@@ -64,12 +65,25 @@ if(!isset($_SESSION["email"])){
                                         <th>Email</th>                                    
                                         <th>Status</th>
                                         <th>Add Date</th>
-                                        <th>Last Login Date</th>                                
+                                        <th>Last Login Date</th>
+                                        <th>Completion Status</th>                              
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="myTable">
                                     <?php
+                                    
+                                    # build a list of student userIds who passed unit 10
+                                    $students_who_passed_unit_10 = array();
+
+                                    foreach ($array1 as $module) {
+                                      if ( preg_match( '/^Test Mountain States Unit 10/', $module['moduleTitle'])
+                                          && $module['completionStatus'] == 'passed' )
+                                      {
+                                            $students_who_passed_unit_10[] = $module['userId'];
+                                      }
+                                    }
+                                    
                                     $s_no=1;
                                     foreach($array as $key => $value){
                                         if($value['role']=='learner')
@@ -78,6 +92,12 @@ if(!isset($_SESSION["email"])){
                                     <tr>
                                         <td><?php echo $s_no; $s_no++;?></td>                                  
                                         <?php
+
+                                        $completionStatus[$key] = 'Incomplete';
+                                        if (in_array($value['userId'], $students_who_passed_unit_10)) {
+                                            $completionStatus[$key] = 'Complete';
+                                        }
+
                                         $Student_Details = $value['fields']['field'];
                                         foreach ($Student_Details as $index => $array2){ 
                                             if($array2['name']=='FIRST_NAME')
@@ -139,6 +159,7 @@ if(!isset($_SESSION["email"])){
                                         <td><?php echo $status[$key]; ?></td>
                                         <td><?php echo $value['addedDate']; ?></td>
                                         <td><?php echo $lastLoginDate[$key]; ?></td>
+                                        <td><?php echo $completionStatus[$key]; ?></td>
                                         <td class="action-part"><a href="student_view_details.php?id=<?php echo $value['userId'] ?>"><input type="button" name="" class="btn-primary btn com-hover" value="View" /></a></td>
                                     <?php }} ?>
                                     </tr>
@@ -147,8 +168,7 @@ if(!isset($_SESSION["email"])){
                         </div>
                     </div>
                 </div>
-            </section>
-            
+            </section>            
         </main>
         <script>
             $(document).ready(function() {
