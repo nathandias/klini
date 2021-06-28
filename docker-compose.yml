@@ -19,12 +19,6 @@ services:
         volumes:
             - ./ispring:/app/ispring
 
-    composer:
-        image: composer:latest
-        command: ["composer", "install"]
-        volumes:
-            - ./ispring:/app/ispring
-
     mysql:
         image: mariadb:latest
         environment:
