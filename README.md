@@ -1,15 +1,23 @@
 # Mountain States Drivers Ed Admin (www.msdeadmin.com) - HOWTO
 
 Additional notes on how this web application works, for site maintennance and support.
+## server installation notes
 
-## installation notes
+    # copy/upload the ispring.tar.gz or ispring.zip archive to the server web root and extract to create /ispring folder
+    cd ispring
+    cp .env.example .env
+    # edit .env in your favorite text editor to define base_url, site passwords and other settings
+    composer install                    # optional: install php dependencies if /ispring/vendor folder doesn't already exist
 
-1. Copy/upload the ispring.tar.gz or ispring.zip archive to the server web root and extract to create the /ispring folder. then:
+## local development with docker
 
-        cd ispring
-        cp .env.example .env                # create .env file from template, and definte base_url and site passwords
-        composer install                    # optional: install php dependencies if /ispring/vendor folder doesn't already exist
-
+    git clone git@github.com:nathandias/klini.git
+    cd klini/ispring
+    cp .env.example .env
+    # edit .env in your favorite text editor to define base_url and site passwords
+    composer install
+    cd ..
+    docker-compose up -d   
 ## code structure notes
 
 Overall idea:
@@ -39,13 +47,13 @@ Each of the files in these directories corresponds to a call to a different API 
 - better variable name would be *$learner_module_results*
 - results for all learners (not just a single learner) are included in the response, and the data is in a flat list format, like:
 
-    record 1: [UserId => A, Module => Unit 1, CompletionStatus => passed, ...]
-    record 2: [UserId => A, Module => Unit 2, CompletionStatus => passed, ...]
-    record 3: [UserId => A, Module => Unit 3, CompletionStatus => in_progress, ...]
-    record 4: [UserId => B, Module => Unit 1, CompletionStatus => passed, ...]
-    record 5: [UserId => B, Module => Unit 2, CompletionStatus => passed, ...]
-    ...
-    record 13: [UserId => A, Module => Unit 10, CompletionStatus => passed, ...]
+        record 1: [UserId => A, Module => Unit 1, CompletionStatus => passed, ...]
+        record 2: [UserId => A, Module => Unit 2, CompletionStatus => passed, ...]
+        record 3: [UserId => A, Module => Unit 3, CompletionStatus => in_progress, ...]
+        record 4: [UserId => B, Module => Unit 1, CompletionStatus => passed, ...]
+        record 5: [UserId => B, Module => Unit 2, CompletionStatus => passed, ...]
+        ...
+        record 13: [UserId => A, Module => Unit 10, CompletionStatus => passed, ...]
 
 and in particular, NOT a nested structure like:
 
@@ -83,7 +91,6 @@ ADDED BY NATHAN
 *student_view_details.php*
 - uses function/student_result.php to show full progress report on the student
 - also uses function/student_group.php and function/department.php to supply supplemental data
-
 
 ## Password checking improvements
 
