@@ -1,0 +1,29 @@
+#
+# Mountain States Driver's Ed Admin
+# Secrets/Environment Variables (TEMPLATE)
+#
+# This is an example .htaccess file that defines site settings and secrets (passwords, API keys)
+# as server environment variables for production use on dreamhost.com shared linux hosting.
+# (The method of defining environment variables differs for various web hosts and cloud services)
+#
+# To use this, copy/rename this template file to '.htaccess' stored in the root /ispring folder, and edit
+# the values as appropriate.
+#
+# For development, you can set $development = true in /ispring/sitedef.php to read the equivalent
+# variables from an equivalent .env file.
+#
+
+SetEnv BASE_URL https://127.0.0.1/
+
+SetEnv VALID_EMAIL admin@example.com
+SetEnv VALID_PASS changethispassword
+
+# ispring learn authorization
+
+SetEnv ISPRING_AUTH_URL https://wordparts.ispringlearn.com/
+SetEnv ISPRING_AUTH_EMAIL ispring@example.com
+SetEnv ISPRING_AUTH_PASS also_change_this
+
+SetEnv ISPRING_DEPARTMENT_ID valid_department_id
+
+SetEnv PAGINATION_LIMIT 10
