@@ -77,100 +77,57 @@ if(!isset($_SESSION["email"])){
                                         $id=$_GET['id'];
                                     }
                                     foreach($array as $key => $value){
+                                        
+                                        # $array represents the XML data for all users (learners and non-learners)
+                                        # gathered from the ispringlearn.com/users endpoint in student_group.php
+                                        #
+                                        # $key - numeric index into $array, NOT the user_id
+                                        # $value - an associative array containing the data for user in $array specified by $key
+                                        # $value['userId'], $value['role'], $value['status'], etc. - toplevel data for this user
+                                        #
+                                        # $StudentDetails - second level details for this user, including names, emails, etc.
+    
+
                                         $Id[$key]=$value['userId'];
-                                        if($id==$Id[$key]){
-                                        $role=$value['role'];
-                                        $statusVal=$value['status'];
-                                        if($statusVal==1)
-                                        {   
-                                            $status='Active';
-                                        }
-                                        else
-                                        {
-                                            $status='In Active';
-                                        }                                     
-                                        $Student_Details = $value['fields']['field'];
-                                        foreach ($Student_Details as $index => $array2){
-                                            if($array2['name']=='FIRST_NAME')
-                                            {
-                                                $FIRST_NAME=$array2['value'];
-                                            }
-                                            if($array2['name']=='LAST_NAME')
-                                            {
-                                                if(!empty($array2['value']))
-                                                {
-                                                    $LAST_NAME=$array2['value'];
-                                                }
-                                                else
-                                                {
-                                                    $LAST_NAME=" ---- ";
-                                                }
-                                            }
-                                            if($array2['name']=='DOB')
-                                            {
-                                                if(!empty($array2['value']))
-                                                {
-                                                    $DOB=$array2['value'];
-                                                }
-                                                else
-                                                {
-                                                    $DOB=" ---- ";
+                                        
+                                        if ($id==$Id[$key]) {
+
+                                            $role=$value['role'];
+                                            $status = ($value['status'] == 1) ? 'Active' : 'In Active';
+                                        
+                                            $Student_Details = $value['fields']['field'];
+
+                                            $important_details = [
+                                                'FIRST_NAME',
+                                                'LAST_NAME',
+                                                'DOB',
+                                                'PRN',
+                                                'PHONE',
+                                                'EMAIL',
+                                                'COUNTRY',
+                                            ];
+
+                                            foreach ($Student_Details as $detail) {
+                                                $detail_name = $detail['name'];
+                                                $detail_value = $detail['value'];
+
+                                                if (in_array($detail_name, $important_details)) {
+
+                                                    ${$detail_name} = !empty($detail_value) ? $detail_value : ' ---- ';
+
                                                 }
                                             }
-                                            if($array2['name']=='PRN')
-                                            {
-                                                if(!empty($array2['value']))
+                                        
+                                            $departmentId=$value['departmentId'];
+
+                                            foreach ($array3 as $dept => $department){
+                                                $deptId=$department['departmentId'];
+                                                if($departmentId==$deptId)
                                                 {
-                                                    $PRN=$array2['value'];
-                                                }
-                                                else
-                                                {
-                                                    $PRN=" ---- ";
-                                                }
-                                            }
-                                            if($array2['name']=='PHONE')
-                                            {
-                                                if(!empty($array2['value']))
-                                                {
-                                                    $PHONE=$array2['value'];
-                                                }
-                                                else
-                                                {
-                                                    $PHONE=" ---- ";
+                                                    $department=$department['name'];
                                                 }
                                             }
-                                            if($array2['name']=='EMAIL')
-                                            {
-                                                if(!empty($array2['value']))
-                                                {
-                                                    $EMAIL=$array2['value'];
-                                                }
-                                                else
-                                                {
-                                                    $EMAIL=" ---- ";
-                                                }
-                                            }
-                                            if($array2['name']=='COUNTRY')
-                                            {
-                                                if(!empty($array2['value']))
-                                                {
-                                                    $COUNTRY=$array2['value'];
-                                                }
-                                                else
-                                                {
-                                                    $COUNTRY=" ---- ";
-                                                }
-                                            }
-                                        }
-                                        $depatmentId=$value['departmentId'];
-                                        foreach ($array3 as $dept => $depatment){
-                                            $deptId=$depatment['departmentId'];
-                                            if($depatmentId==$deptId)
-                                            {
-                                                $department=$depatment['name'];
-                                            }
-                                        }
-                                    }
+                                      }
                                     }
                                     $time=0;
                                     $val=0;
@@ -296,7 +253,7 @@ if(!isset($_SESSION["email"])){
 
                                     <div class="inner-section sec-one flex width-half">
                                         <div class="left">
-                                            <p class="label-p changeMe">Roll</p>
+                                            <p class="label-p changeMe">Role</p>
                                         </div>
                                         <div class="right">
                                             <p class="changeMe"><?php echo $role; ?></p>
