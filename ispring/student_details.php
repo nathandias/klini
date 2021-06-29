@@ -66,7 +66,7 @@ if(!isset($_SESSION["email"])){
                                         <th>Status</th>
                                         <th>Add Date</th>
                                         <th>Last Login Date</th>
-                                        <th>Completion Status</th>                              
+                                        <th>Completion Status</th>                      
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -78,9 +78,12 @@ if(!isset($_SESSION["email"])){
 
                                     foreach ($array1 as $module) {
                                       if ( preg_match( '/^Test Mountain States Unit 10/', $module['moduleTitle'])
-                                          && $module['completionStatus'] == 'passed' )
+                                          && $module['completionStatus'] == 'passed')
                                       {
-                                            $students_who_passed_unit_10[] = $module['userId'];
+                                          # one additional check: make sure student spent at least 10 hrs (600 mins) on unit 10
+                                          if ($module['timeSpent'] >= 600) {
+                                              $studentsWhoPassedUnit10[] = $module['userId'];
+                                          }
                                       }
                                     }
                                     
@@ -94,7 +97,7 @@ if(!isset($_SESSION["email"])){
                                         <?php
 
                                         $completionStatus[$key] = 'Incomplete';
-                                        if (in_array($value['userId'], $students_who_passed_unit_10)) {
+                                        if (in_array($value['userId'], $studentsWhoPassedUnit10)) {
                                             $completionStatus[$key] = 'Complete';
                                         }
 
@@ -152,6 +155,7 @@ if(!isset($_SESSION["email"])){
                                             {
                                                 $lastLoginDate[$key]=" ---- ";
                                             }
+
                                         ?>
                                         <td><?php echo $FIRST_NAME[$key]; ?></td>
                                         <td><?php echo $LAST_NAME[$key]; ?></td>
