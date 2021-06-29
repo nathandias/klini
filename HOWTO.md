@@ -2,50 +2,105 @@
 
 Additional notes on how this web application works, for site maintennance and support.
 
-## Installation Notes
-1. copy the ispring.tar.gz file to a web server that supports PHP code execution and SSL certificates
-2. tar zxvpf ispring.tar.gz
-3. this creates the 'ispring' subdirectory containing the relevant code
+## installation notes
+
+1. Copy/upload the ispring.tar.gz or ispring.zip archive to the server web root and extract to create the /ispring folder. then:
+
+        cd ispring
+        cp .env.example .env                # create .env file from template, and definte base_url and site passwords
+        composer install                    # optional: install php dependencies if /ispring/vendor folder doesn't already exist
+
+## code structure notes
+
+Overall idea:
+- php code in /ispring/function folder fetches data from the API and puts it into php arrays
+- php code in /ispring folder formats the array data into html tables
+- other non-php code in /ispring/js and /ispring/css, does the paging, prettifying the tables + form validation
+### /ispring/function/
+- department.php
+- student_group.php
+- student_result.php
+
+The entire contents of these three files was included/quoted as the "documentation" for the "Advanced Student Details Website".
+
+curl is a php library for fetching data from a specified URL. In this case, calls the to various ispringlearn.com REST API endpoints
+return XML data as their response.
+
+Each of the files in these directories corresponds to a call to a different API endpoint.
+
+*department.php* fills *$array3* with department data from the api-learn.ispringlearn.com/department endpoint
+- a better variable name for $array3 would be *$department_data*
+
+*student_group.php* fills *$array* all user data from the api-learn.ispringlearn.com/user endpoint
+- a better variable name would be *$all_users*
+- both 'learners' (students) and non-learner (custom, admin, etc) users are included, so need to filter on role='learner' to display only students
+
+*student_result.php* fills *$array1* with data from the api-learn.ispringlearn.com/learners/modules/results end point
+- better variable name would be *$learner_module_results*
+- results for all learners (not just a single learner) are included in the response, and the data is in a flat list format, like:
+
+    record 1: [UserId => A, Module => Unit 1, CompletionStatus => passed, ...]
+    record 2: [UserId => A, Module => Unit 2, CompletionStatus => passed, ...]
+    record 3: [UserId => A, Module => Unit 3, CompletionStatus => in_progress, ...]
+    record 4: [UserId => B, Module => Unit 1, CompletionStatus => passed, ...]
+    record 5: [UserId => B, Module => Unit 2, CompletionStatus => passed, ...]
+    ...
+    record 13: [UserId => A, Module => Unit 10, CompletionStatus => passed, ...]
+
+and in particular, NOT a nested structure like:
+
+    record 1: [UserId = A, Modules => [
+        [ModuleName => Unit 1, CompletionStatus => passed]
+        [ModuelName => Unit 2, CompletionStatus => passed]
+        [ModuelName => Unit 3, CompletionStatus => in_progress]
+        ]]
+    record 2: [UserId = B, Modules => [
+        [ModuleName => Unit 1, CompletionStatus => passed]
+        [ModuleName => Unit 1, CompletionStatus => passed]
+        ...
+        [ModuleName => Unit 10, CompletionStatus => passed]
+    ]]
+
+### /ispring/
+
+**ORIGINAL FILES**
+- index.php - displays the login and authenticates the user
+- student_details.php - displays the paged list of all student records
+- student_view_details.php - displays an individual student record with full progress details
+
+**ADDED BY NATHAN**
+- .env - holds the definition of the base URL + secret passwords that should not be in version control (based on .env.example template)
+- sitedef.php - reads the .env configuration values in to php variables 
+
+*index.php*
+- checks email/password against those defined in .env file
+
+*student_details.php* 
+- uses function/student_group.php to get all the users, and filters by role='learner'
+ADDED BY NATHAN
+- uses function/student_result.php to add "Completion Status" column to the summary page
+
+*student_view_details.php*
+- uses function/student_result.php to show full progress report on the student
+- also uses function/student_group.php and function/department.php to supply supplemental data
 
 
-## Directory Structure
+## Password checking improvements
 
-ispring/
-    .env.example                # copy this file to '.env' and edit the secret values for valid email id and passwords
-    index.php                   # displays the login form
-    sitedef.php                 # defines the site URL and reads in the .env to get valid email id and password
-    student_details.php         # displays a list of student records with a link to view individual records (uses function/student_group.php to get data)
-    student_view_details.php    # displays a single student record (primarily uses function/student_result.php to get data)
-|_ css/
-|_ js/
-     - paging.js
-     - script.js    # front-end validation of username and password
-|_ function/
-     - department.php           # accesses the ispringlearn.com/departments API endpoint and returns data in php variable $array3
-     - student_group.php        # accesses the ispringlearn.com/user?departments[]=specific_id API endpoint and returns data in php variable $array
-     - student_result.php       # accesses the ispringlearn.com/learners/modules/results endpoint and returns data in php variable $array1
+The original code did email/password validation and authentication for the web app in plain-text, with a simple 'if' statements in two places:
+- /ispring/index.php
+- /ispring/js/script.js
 
-## index.php
+Hardcoding a password in plain text is never a good idea. It was somewhat hidden in the index.php file, since php files are not world readable, but
+the passwords in script.js are absolutely world readable, and therefore vulnerable. Furthermore, if the index.php file is ever committed to public version control (i.e. GitHub), the passwords there would also be visible.
 
-Originally, this code file used a php if statement to test whether user POSTed email and password matched a plain-text email and password hardcoded
-into the php source file. It also indirectly loadeded /js/script.js which contained some javascript form validation of the same hardcoded plain-text
-email and password.
-
-### Security vulnerabilities discovered
-1. js/script.js: this file is always world readable, and thus so are any username/passwords contained in it
-2. index.php - although the php source file would not necessarily be readable, if the code is commited to public version control (i.e. GitHub),
-    then the login credentials could be public too
-
-### Nathan's security modifications
-1. remove the plain-text credentials from both script.js and index.php, and put them into a .env file
-2. add .env to .gitignore list to exclude it from version control (okay to commit a .env.example with dummy values to version control though)
-3. load the .env values into php variables in the needed scripts using vlucas/phpdotenv library (included in sitedef.php)
-4. authenticate the credentials in php / backend...and only do basic validation in javascript
-
-changed files: index.php, sitedef.php, js/script.js
-added files: .env, .env.example
-
-While we're at it, also pulled ispring API credentials out out the source file and placed these values in .env
+### Nathan's modifications
+- extract web app passwords into a .env file not world readable and load the values into php separately using vlucas/phpdotenv
+- ensure .env file is not committed to public version control by adding it to .gitignore
+- do the password authentication solely in PHP where it is more secure
+- do only basic form validation in javascript (OKAY: are any required fields empty? BAD: does the password match a hardcoded plain-text password?)
+- while we're at it, also store ispringlearn.com API credentials in the .env file, to keep them safe
+- place the .env file outside of the web server and php root
 
 
 
