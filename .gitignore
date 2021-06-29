@@ -1,5 +1,8 @@
 vendor/
 archives/
 .env
+.htaccess
+ispring.zip
+ispring.tar.gz
 php.ini*
 
