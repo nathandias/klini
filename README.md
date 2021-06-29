@@ -3,12 +3,11 @@
 Additional notes on how this web application works, for site maintennance and support.
 ## dreamhost.com shared hosting server installation notes
 
-    # copy/upload the ispring.tar.gz or ispring.zip archive to the server web root and extract to create /ispring folder
+    # copy/upload the ispring.zip archive to the server web root
+    unzip ispring                       # creates the /ispring folder
     cd ispring
     cp .htaccess.dreamhost.example .htaccess
     # edit .htaccess in your favorite text editor to define base_url, site passwords and other settings
-    composer install                    # optional: install php dependencies if /ispring/vendor folder doesn't already exist
-
 ## local development with docker (optional)
 
     git clone git@github.com:nathandias/klini.git
@@ -25,6 +24,14 @@ Overall idea:
 - php code in /ispring/function folder fetches data from the API and puts it into php arrays
 - php code in /ispring folder formats the array data into html tables
 - other non-php code in /ispring/js and /ispring/css, does the paging, prettifying the tables + form validation
+
+### Suggested Programming Exercise
+1. Read the ispring API support documentation at ispringsolutions.com/docs/.
+2. Use the code files in /ispring/function/*.php as examples to create a new file ("new_api_call.php") that
+    gets data from a different API endpoint and puts it into a new array
+3. Use the code files in /ispring/*.php as examples, create a new file ("new_data_display.php") that accesses
+    the data array from part 2 and displays it in an HTML table
+
 ### /ispring/function/
 - department.php
 - student_group.php
@@ -91,7 +98,7 @@ and in particular, NOT a nested structure like:
 - checks email/password against those defined in .env file
 
 *student_details.php* 
-- uses function/student_group.php to get all the users, and filters by role='learner'
+- uses from function/student_group.php to get all the users, and filters by role='learner'
 ADDED BY NATHAN
 - uses function/student_result.php to add "Completion Status" column to the summary page
 
@@ -109,9 +116,8 @@ Hardcoding a password in plain text is never a good idea. It was somewhat hidden
 the passwords in script.js are absolutely world readable, and therefore vulnerable. Furthermore, if the index.php file is ever committed to public version control (i.e. GitHub), the passwords there would also be visible.
 
 ### Nathan's modifications
-- extract web app passwords into a .env file not world readable and load the values into php separately using vlucas/phpdotenv
+- extract web app passwords into a .htaccess or .env files that is not world readable and load the values into php separately
 - ensure .env file is not committed to public version control by adding it to .gitignore
 - do the password authentication solely in PHP where it is more secure
 - do only basic form validation in javascript (OKAY: are any required fields empty? BAD: does the password match a hardcoded plain-text password?)
 - while we're at it, also store ispringlearn.com API credentials in the .env file, to keep them safe
-- place the .env file outside of the web server and php root
