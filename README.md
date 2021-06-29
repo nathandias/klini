@@ -1,21 +1,22 @@
 # Mountain States Drivers Ed Admin (www.msdeadmin.com) - HOWTO
 
 Additional notes on how this web application works, for site maintennance and support.
-## server installation notes
+## dreamhost.com shared hosting server installation notes
 
     # copy/upload the ispring.tar.gz or ispring.zip archive to the server web root and extract to create /ispring folder
     cd ispring
-    cp .env.example .env
-    # edit .env in your favorite text editor to define base_url, site passwords and other settings
+    cp .htaccess.dreamhost.example .htaccess
+    # edit .htaccess in your favorite text editor to define base_url, site passwords and other settings
     composer install                    # optional: install php dependencies if /ispring/vendor folder doesn't already exist
 
-## local development with docker
+## local development with docker (optional)
 
     git clone git@github.com:nathandias/klini.git
     cd klini/ispring
     cp .env.example .env
     # edit .env in your favorite text editor to define base_url and site passwords
     composer install
+    # edit sitedef.php and set $development = true
     cd ..
     docker-compose up -d   
 ## code structure notes
@@ -77,8 +78,14 @@ and in particular, NOT a nested structure like:
 - student_view_details.php - displays an individual student record with full progress details
 
 **ADDED BY NATHAN**
-- .env - holds the definition of the base URL + secret passwords that should not be in version control (based on .env.example template)
-- sitedef.php - reads the .env configuration values in to php variables 
+*sitedef.php*
+ - reads the site configuration and secret passwords/API keys from environment variables
+    - in production on dreamhost.com, values should be set in the .htaccess file using SetEnv command
+    - for development, edit sitedef.php and set $development = true to read values from .env file instead
+    - .env.example and .htaccess.dreamhost.example files are provided as templates; customize appropriately
+    - *.example files are okay to commit to public version control (GitHub); do not commit .env or .htaccess files containing
+        live passwords or secrets!
+    - .env and .htaccess are included in .gitignore to prevent these from being committed
 
 *index.php*
 - checks email/password against those defined in .env file
@@ -108,8 +115,3 @@ the passwords in script.js are absolutely world readable, and therefore vulnerab
 - do only basic form validation in javascript (OKAY: are any required fields empty? BAD: does the password match a hardcoded plain-text password?)
 - while we're at it, also store ispringlearn.com API credentials in the .env file, to keep them safe
 - place the .env file outside of the web server and php root
-
-
-
-
-
