@@ -92,13 +92,13 @@ and in particular, NOT a nested structure like:
     - .env.example and .htaccess.dreamhost.example files are provided as templates; customize appropriately
     - *.example files are okay to commit to public version control (GitHub); do not commit .env or .htaccess files containing
         live passwords or secrets!
-    - .env and .htaccess are included in .gitignore to prevent these from being committed
+    - .env and .htaccess are included in .gitignore to prevent these from being committed to version control
 
 *index.php*
 - checks email/password against those defined in .env file
 
 *student_details.php* 
-- uses from function/student_group.php to get all the users, and filters by role='learner'
+- uses function/student_group.php to get all the users, and filters by role='learner'
 ADDED BY NATHAN
 - uses function/student_result.php to add "Completion Status" column to the summary page
 
@@ -121,3 +121,39 @@ the passwords in script.js are absolutely world readable, and therefore vulnerab
 - do the password authentication solely in PHP where it is more secure
 - do only basic form validation in javascript (OKAY: are any required fields empty? BAD: does the password match a hardcoded plain-text password?)
 - while we're at it, also store ispringlearn.com API credentials in the .env file, to keep them safe
+
+#### Pagination
+
+Change the sitewide pagination limit by editing the default value in the .htaccess file
+
+    # .htaccess
+    SetEvn PAGINATION_LIMIT 10
+
+You can override the default value temporarily by adding "?pagination_limit=<somenumber>" to the results url.
+
+For example, instead of:
+
+https://www.msdeadmin.com/ispring/student_details.php
+
+view:
+
+https://www.msdeadmin.com/ispring/student_details.php?pagination_limit=5
+
+to view results paged every 5 records.
+
+#### Debug Info
+
+Two php files are included to help view the raw data returned by the ispring API calls:
+
+/ispring/display_array.php   (display $array which corresponds to the /user endpoint)
+/ispring/display_array1.php  (display $array1 which corresponds to the /learners/modules/result endpoint)
+
+The scripts fetch the data from the API, put them into the corresponding arrays and then var_dump
+the results to the page. View them at:
+
+https://www.msdeadmin.com/ispring/display_array.php
+https://www.msdeadmin.com/ispring/display_array1.php
+
+SECURITY NOTE: these files are for development convenience only, and should be deleted from the
+live website area!
+
